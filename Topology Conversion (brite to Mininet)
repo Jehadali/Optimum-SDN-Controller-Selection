@@ -1,1 +1,4 @@
 
+#The topolgoy from brite will be converted to Mininet for evaluation
+#install Fast Network Simulation setup (FNSS) on the machine running mininet
+
