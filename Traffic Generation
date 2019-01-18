@@ -1,0 +1,9 @@
+#the traffic generation between source and destination with packet rate for a specific time
+#Run the topology on Mininet for a controller
+#once path is established between source and destination do the following:
+#Open h2 i.e. receiving or destination host via xming terminal and 
+#Receiving host 
+#D-ITG>bin#./ITGRecv
+#On the Sending host type the ip address of the receiver , specify the packet sending rate and time 
+
+
