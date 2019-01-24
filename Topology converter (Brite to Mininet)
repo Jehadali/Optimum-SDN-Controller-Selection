@@ -1,0 +1,47 @@
+ #Topology Regeneration in Mininet
+ from mininet.topo import Topo
+ from mininet.net import Mininet
+ from mininet.link import Link
+ from mininet.node import TCLink
+ from mininet.util import dumpNodeConnections
+ from mininet.log import setLogLevel
+ from mininet.cli import CLI
+ import pylab as plt
+ from mininet.node import Controller
+ from mininet.node import RemoteController
+ from mininet.node import OVSKernelSwitch
+ from mininet.node import UserSwitch
+ from mininet.log import setLogLevel
+ import networkx as nx
+ from datetime import datetime
+ import fnss
+ def mapping(h):
+ return h+1
+ def conversiontopo():
+ #to deal with Brite topology (200 nodes, 400 Edges)
+ BRITE_topology = ('B_2.brite')
+ #B_2 is the topology generated via BRTIE
+ #Below line parse the brite file using fnss
+ mytopology_parsed = fnss.parse_brite(BRITE_topology)
+ mytopology_undirected= mytopology_parsed.to_undirected()
+ topology_new=nx.relabel_nodes(mytopology_undirected,mapping)
+ fnss.clear_capacities(topology1)
+ print(topology_new.nodes())
+ Nodes_list= topology1.nodes(data=False)
+ mint_topo = fnss.to_mininet(topology_new, switches= Nodes_list, hosts=None, relabel_nodes=True)
+ net = Mininet(topo=mint_topo, link=TCLink, controller=RemoteController)
+ c1 = net.addController('c1',controller=RemoteController,ip='192.168.1.10',port = 6633)
+ #add ip of the controller 
+ #Added Two Hosts to Brite Topology
+ h1= net.addHost( 'h1') 
+ h2 = net.addHost('h2') 
+ net.addLink(h1, 's1') 
+ net.addLink(h2, 's400') 
+ net.start()
+ print "Mininet is starting the hosts and switches"
+ dumpNodeConnections(net.hosts)
+ CLI( net )
+ net.stop()
+ if __name__ == '__main__':
+ setLogLevel( 'info' )
+ conversiontopo()
