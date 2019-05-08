@@ -4,9 +4,9 @@ from mininet.node import CPULimitedHost, Host, Node
 from mininet.node import OVSKernelSwitch
 from mininet.topo import Topo
 
-class abileneTopo(Topo):
+class abilene_opology(Topo):
 
-    "Abilene Topology"
+    "AThe Mininet bilene Topology"
 
     def __init__(self):
         "Create Abilene Topology"
@@ -50,4 +50,4 @@ class abileneTopo(Topo):
         self.addLink(h1, S1)
         self.addLink(h2, S11)
         
-topos = { 'mytopo': (lambda: abileneTopo() ) }
+topos = { 'mytopo': (lambda: abilene_Topology() ) }
