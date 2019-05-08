@@ -1,1 +1,9 @@
+# The source and destination hosts terminals must be opened by the calculations
 
+# the following command is used for opening the xterminal
+
+xterm h1 h2
+
+# then navigate to D-ITG>BIN directory on source and destinatin hosts
+
+# 
