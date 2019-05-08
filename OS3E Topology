@@ -1,0 +1,183 @@
+#!/usr/bin/python
+
+from mininet.net import Mininet
+from mininet.node import CPULimitedHost, Host, Node
+from mininet.node import OVSKernelSwitch, UserSwitch
+from mininet.node import IVSSwitch
+from mininet.node import Controller, RemoteController, OVSController
+from mininet.cli import CLI
+from mininet.log import setLogLevel, info
+from mininet.link import TCLink, Intf
+from subprocess import call
+
+def OS3ETOPOLOGY():
+
+    net = Mininet( topo=None,
+                   build=False,
+                   ipBase='10.0.0.0/8')
+
+    info( '*** Adding controller\n' )
+    c0=net.addController(name='c0',
+                      controller=RemoteController,
+                      ip='127.0.0.1',
+                      protocol='tcp',
+                      port=6633)
+
+    info( '*** Add switches\n')
+    s2 = net.addSwitch('s2', cls=OVSKernelSwitch)
+    s29 = net.addSwitch('s29', cls=OVSKernelSwitch)
+    s24 = net.addSwitch('s24', cls=OVSKernelSwitch)
+    s31 = net.addSwitch('s31', cls=OVSKernelSwitch)
+    s16 = net.addSwitch('s16', cls=OVSKernelSwitch)
+    s3 = net.addSwitch('s3', cls=OVSKernelSwitch)
+    s10 = net.addSwitch('s10', cls=OVSKernelSwitch)
+    s22 = net.addSwitch('s22', cls=OVSKernelSwitch)
+    s4 = net.addSwitch('s4', cls=OVSKernelSwitch)
+    s11 = net.addSwitch('s11', cls=OVSKernelSwitch)
+    s32 = net.addSwitch('s32', cls=OVSKernelSwitch)
+    s21 = net.addSwitch('s21', cls=OVSKernelSwitch)
+    s5 = net.addSwitch('s5', cls=OVSKernelSwitch)
+    s28 = net.addSwitch('s28', cls=OVSKernelSwitch)
+    s12 = net.addSwitch('s12', cls=OVSKernelSwitch)
+    s33 = net.addSwitch('s33', cls=OVSKernelSwitch)
+    s20 = net.addSwitch('s20', cls=OVSKernelSwitch)
+    s1 = net.addSwitch('s1', cls=OVSKernelSwitch)
+    s6 = net.addSwitch('s6', cls=OVSKernelSwitch)
+    s13 = net.addSwitch('s13', cls=OVSKernelSwitch)
+    s27 = net.addSwitch('s27', cls=OVSKernelSwitch)
+    s19 = net.addSwitch('s19', cls=OVSKernelSwitch)
+    s7 = net.addSwitch('s7', cls=OVSKernelSwitch)
+    s14 = net.addSwitch('s14', cls=OVSKernelSwitch)
+    s34 = net.addSwitch('s34', cls=OVSKernelSwitch)
+    s26 = net.addSwitch('s26', cls=OVSKernelSwitch)
+    s23 = net.addSwitch('s23', cls=OVSKernelSwitch)
+    s18 = net.addSwitch('s18', cls=OVSKernelSwitch)
+    s8 = net.addSwitch('s8', cls=OVSKernelSwitch)
+    s15 = net.addSwitch('s15', cls=OVSKernelSwitch)
+    s30 = net.addSwitch('s30', cls=OVSKernelSwitch)
+    s25 = net.addSwitch('s25', cls=OVSKernelSwitch)
+    s9 = net.addSwitch('s9', cls=OVSKernelSwitch)
+    s17 = net.addSwitch('s17', cls=OVSKernelSwitch)
+
+    info( '*** Add hosts\n')
+    h1= net.addHost( 'h1', mac=
+
+"00:00:00:00:00:01" )
+
+    h2 = net.addHost( 'h2', mac=
+
+"00:00:00:00:00:02" )
+
+    info( '*** Add links\n')
+    net.addLink(s9, s33)
+    net.addLink(s33, s32)
+    net.addLink(s32, s1)
+    net.addLink(s1, s15)
+    net.addLink(s15, s23)
+    net.addLink(s23, s5)
+    net.addLink(s5, s25)
+    net.addLink(s25, s13)
+    net.addLink(s13, s18)
+    net.addLink(s18, s19)
+    net.addLink(s18, s16)
+    net.addLink(s16, s2)
+    net.addLink(s2, s8)
+    net.addLink(s8, s11)
+    net.addLink(s11, s4)
+    net.addLink(s4, s27)
+    net.addLink(s27, s21)
+    net.addLink(s21, s33)
+    net.addLink(s33, s29)
+    net.addLink(s29, s1)
+    net.addLink(s29, s15)
+    net.addLink(s29, s6)
+    net.addLink(s6, s20)
+    net.addLink(s20, s7)
+    net.addLink(s7, s25)
+    net.addLink(s5, s14)
+    net.addLink(s14, s6)
+    net.addLink(s25, s31)
+    net.addLink(s31, s17)
+    net.addLink(s17, s2)
+    net.addLink(s20, s4)
+    net.addLink(s4, s30)
+    net.addLink(s30, s12)
+    net.addLink(s12, s34)
+    net.addLink(s34, s10)
+    net.addLink(s10, s22)
+    net.addLink(s22, s28)
+    net.addLink(s28, s26)
+    net.addLink(s26, s24)
+    net.addLink(s24, s30)
+    net.addLink(s10, s3)
+    net.addLink(s3, s16)
+    net.addLink(s9, h1)
+    net.addLink(h2, s19)
+
+    info( '*** Starting network\n')
+    net.build()
+    info( '*** Starting controllers\n')
+    for controller in net.controllers:
+        controller.start()
+
+    info( '*** Starting switches\n')
+    net.get('s2').start([c0])
+    net.get('s29').start([c0])
+    net.get('s24').start([c0])
+    net.get('s31').start([c0])
+    net.get('s16').start([c0])
+    net.get('s3').start([c0])
+    net.get('s10').start([c0])
+    net.get('s22').start([c0])
+    net.get('s4').start([c0])
+    net.get('s11').start([c0])
+    net.get('s32').start([c0])
+    net.get('s21').start([c0])
+    net.get('s5').start([c0])
+    net.get('s28').start([c0])
+    net.get('s12').start([c0])
+    net.get('s33').start([c0])
+    net.get('s20').start([c0])
+    net.get('s1').start([c0])
+    net.get('s6').start([c0])
+    net.get('s13').start([c0])
+    net.get('s27').start([c0])
+    net.get('s19').start([c0])
+    net.get('s7').start([c0])
+    net.get('s14').start([c0])
+    net.get('s34').start([c0])
+    net.get('s26').start([c0])
+    net.get('s23').start([c0])
+    net.get('s18').start([c0])
+    net.get('s8').start([c0])
+    net.get('s15').start([c0])
+    net.get('s30').start([c0])
+    net.get('s25').start([c0])
+    net.get('s9').start([c0])
+    net.get('s17').start([c0])
+    
+    h1.cmd("arp -s 10.0.0.2 00:00:00:00:00:02")
+
+    h2.cmd("arp -s 10.0.0.1 00:00:00:00:00:01") 
+
+    h1.cmd("tcpdump -i h1-eth0 -nn -X 'icmp' -w send &")
+
+    h2.cmd("tcpdump -i h2-eth0 -nn -X 'icmp' -w receive &")
+
+ 
+
+    print "*** Running CLI"
+
+    CLI( net )
+
+ 
+
+    print "*** Stopping network"
+
+    net.stop()
+  
+
+if __name__ == '__main__':
+    setLogLevel( 'info' )
+   OS3ETOPOLOGY()
+
