@@ -1,1 +1,53 @@
+#!/usr/bin/python
 
+from mininet.node import CPULimitedHost, Host, Node
+from mininet.node import OVSKernelSwitch
+from mininet.topo import Topo
+
+class abileneTopo(Topo):
+
+    "Abilene Topology"
+
+    def __init__(self):
+        "Create Abilene Topology"
+
+        Topo.__init__(self)
+
+        #Add hosts
+
+        h1 = self.addHost('h1', cls=Host, ip='10.0.0.1', defaultRoute=None)
+        h2 = self.addHost('h2', cls=Host, ip='10.0.0.2', defaultRoute=None)
+       
+
+        #Add switches
+        S1= self.addSwitch('s1', cls=OVSKernelSwitch)
+        S2 = self.addSwitch('s2', cls=OVSKernelSwitch)
+        S3 = self.addSwitch('s3', cls=OVSKernelSwitch)
+        S4 = self.addSwitch('s4', cls=OVSKernelSwitch)
+        S5 = self.addSwitch('s5', cls=OVSKernelSwitch)
+        S6 = self.addSwitch('s6', cls=OVSKernelSwitch)
+        S7= self.addSwitch('s7', cls=OVSKernelSwitch)
+        S8 = self.addSwitch('s8', cls=OVSKernelSwitch)
+        S9= self.addSwitch('s9', cls=OVSKernelSwitch)
+        S10= self.addSwitch('s10', cls=OVSKernelSwitch)
+        S11= self.addSwitch('s11', cls=OVSKernelSwitch)
+
+        #Add links
+        self.addLink(S1, S3)
+        self.addLink(S1, S2)
+        self.addLink(S2, S6)
+        self.addLink(S2, S3)
+        self.addLink(S3, S4)
+        self.addLink(S4, S5)
+        self.addLink(S5, S6)
+        self.addLink(S5, S7)
+        self.addLink(S6, S8)
+        self.addLink(S7, S11)
+        self.addLink(S7, S8)
+        self.addLink(S8, S9)
+        self.addLink(S9, S10)
+        self.addLink(S10, S11)
+        self.addLink(h1, S1)
+        self.addLink(h2, S11)
+        
+topos = { 'mytopo': (lambda: abileneTopo() ) }
