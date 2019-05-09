@@ -1,0 +1,23 @@
+# After downloading the D-ITG
+
+# Navigate to D-ITG Directory
+
+#cd D-ITG-2.8.1-r1023
+
+#cd src/
+
+D-ITG-2.8.1-r1023/src# make
+
+#dependencies will be checked 
+
+# if dependencies are satisfied it will be correctly installed
+
+cd D-ITG/bin
+
+On the destination host type:
+
+D-ITG/bin#./ITGRecv
+
+#ITGRecv will open a listening socket for TCP/UDP traffic coming from the other nodes.
+
+#In contrast, ITGSend is used to send a constant TCP traffic flow 
