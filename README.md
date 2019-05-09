@@ -20,6 +20,8 @@ The D-ITG calculates the delay between the source and destination during the hig
 
 Pre-requisities
 
+Installation of Ubuntu 16.04 LTS
+
 Installation of Distributed Internet Traffic generator
 
 Installation of Fast Network Simulation Setup (FNSS)
