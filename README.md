@@ -22,7 +22,7 @@ Pre-requisities
 
 Installation of Distributed Internet Traffic generator
 
-Installation of FNSS
+Installation of Fast Network Simulation Setup (FNSS)
 
 Installation of Mininet
 
