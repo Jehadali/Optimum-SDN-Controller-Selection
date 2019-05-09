@@ -1,0 +1,410 @@
+#ODL Shortest path calculation.
+
+public class Dijkstra-Algorithm Implementation Routefinding, TopoAware {
+
+    private static Logger log = LoggerFactory
+            .getLogger(Dijkstra-Algorithm.class);
+    private ConcurrentMap<Short, Graph<V, E>> topologyBWAware;
+    private ConcurrentMap<Short, DijkstraShortestPath<V, E>> sptBWAware;
+    DijkstraShortestPath<V, E> mtp; 
+    private Set<IListenRoutingUpdates> routingAware;
+    private ISwitchManager switchManager;
+    private ITopologyManager topologyManager;
+    private IReadService readService;
+    private static final long DEFAULT_LINK_SPEED = Bandwidth.BW1Gbps;
+
+    public void setListenRoutingUpdates(IListenRoutingUpdates i) {
+        if (this.routingAware == null) {
+            this.routingAware = new HashSet<IListenRoutingUpdates>();
+        }
+        if (this.routingAware != null) {
+            log.debug("Adding routingAware listener: {}", i);
+            this.routingAware.add(i);
+        }
+    }
+
+    public void unsetListenRoutingUpdates(IListenRoutingUpdates i) {
+        if (this.routingAware == null) {
+            return;
+        }
+        log.debug("Removing routingAware listener");
+        this.routingAware.remove(i);
+        if (this.routingAware.isEmpty()) {
+            this.routingAware = null;
+        }
+    }
+
+    @Override
+    public synchronized void initMaxThroughput(
+            final Map<E, Number> EWeightMap) {
+        if (mtp != null) {
+            log.error("Max Throughput Dijkstra is already enabled!");
+            return;
+        }
+        Transformer<E, ? extends Number> mtTransformer = null;
+        if (EWeightMap == null) {
+            mtTransformer = new Transformer<E, Double>() {
+                public Double transform(E e) {
+                    if (switchManager == null) {
+                        log.error("switchManager is null");
+                        return (double) -1;
+                    }
+                    VConnector Sourcehost(H1)NC = e.getTailVConnector();
+                    VConnector Destinationhost(H2)NC = e.getHeadVConnector();
+                    if ((Sourcehost(H1)NC == null) || (Destinationhost(H2)NC == null)) {
+                        log.error("Sourcehost(H1)NC:{} or Destinationhost(H2)NC:{} is null", Sourcehost(H1)NC, Destinationhost(H2)NC);
+                        return (double) -1;
+                    }
+                    Bandwidth bwSourcehost(H1) = (Bandwidth) switchManager
+                            .getVConnectorProp(Sourcehost(H1)NC,
+                                    Bandwidth.BandwidthPropName);
+                    Bandwidth bwDestinationhost(H2) = (Bandwidth) switchManager
+                            .getVConnectorProp(Destinationhost(H2)NC,
+                                    Bandwidth.BandwidthPropName);
+
+                    long Sourcehost(H1)LinkSpeed = 0, Destinationhost(H2)LinkSpeed = 0;
+                    if ((bwSourcehost(H1) == null)
+                            || ((Sourcehost(H1)LinkSpeed = bwSourcehost(H1).getValue()) == 0)) {
+                        log.debug(
+                                "Sourcehost(H1)NC: {} - Setting Sourcehost(H1)LinkSpeed to Default!",
+                                Sourcehost(H1)NC);
+                        Sourcehost(H1)LinkSpeed = DEFAULT_LINK_SPEED;
+                    }
+
+                    if ((bwDestinationhost(H2) == null)
+                            || ((Destinationhost(H2)LinkSpeed = bwDestinationhost(H2).getValue()) == 0)) {
+                        log.debug(
+                                "Destinationhost(H2)NC: {} - Setting Destinationhost(H2)LinkSpeed to Default!",
+                                Destinationhost(H2)NC);
+                        Destinationhost(H2)LinkSpeed = DEFAULT_LINK_SPEED;
+                    }
+
+                    long avlSourcehost(H1)ThruPut = Sourcehost(H1)LinkSpeed
+                            - readService.getTransmitRate(Sourcehost(H1)NC);
+                    long avlDestinationhost(H2)ThruPut = Destinationhost(H2)LinkSpeed
+                            - readService.getTransmitRate(Destinationhost(H2)NC);
+
+                    // Use lower of the 2 available thruput as the available
+                    // thruput
+                    long avlThruPut = avlSourcehost(H1)ThruPut < avlDestinationhost(H2)ThruPut ? avlSourcehost(H1)ThruPut
+                            : avlDestinationhost(H2)ThruPut;
+
+                    if (avlThruPut <= 0) {
+                        log.debug("E {}: Available Throughput {} <= 0!", e,
+                                avlThruPut);
+                        return (double) -1;
+                    }
+                    return (double) (Bandwidth.BW1Pbps / avlThruPut);
+                }
+            };
+        } else {
+            mtTransformer = new Transformer<E, Number>() {
+                public Number transform(E e) {
+                    return EWeightMap.get(e);
+                }
+            };
+        }
+        Short baseBW = Short.valueOf((short) 0);
+        // Initialize mtp also using the default topo
+        Graph<V, E> g = this.topologyBWAware.get(baseBW);
+        if (g == null) {
+            log.error("Default Topology Graph is null");
+            return;
+        }
+        mtp = new DijkstraShortestPath<V, E>(g, mtTransformer);
+    }
+
+    @Override
+    public Path getRoute(V Sourcehost(H1), V Destinationhost(H2)) {
+        if (Sourcehost(H1) == null || Destinationhost(H2) == null) {
+            return null;
+        }
+        return getRoute(Sourcehost(H1), Destinationhost(H2), (short) 0);
+    }
+
+    @Override
+    public synchronized Path getMaxThroughputRoute(V Sourcehost(H1), V Destinationhost(H2)) {
+        if (mtp == null) {
+            log.error("Max Throughput Path Calculation Uninitialized!");
+            return null;
+        }
+
+        List<E> path;
+        try {
+            path = mtp.getMaxThroughputPath(Sourcehost(H1), Destinationhost(H2));
+        } catch (IllegalArgumentException ie) {
+            log.debug("A vertex is yet not known between {} {}", Sourcehost(H1), Destinationhost(H2));
+            return null;
+        }
+        Path res;
+        try {
+            res = new Path(path);
+        } catch (ConstructionException e) {
+            log.debug("A vertex is yet not known between {} {}", Sourcehost(H1), Destinationhost(H2));
+            return null;
+        }
+        return res;
+    }
+
+    @Override
+    public synchronized Path getRoute(V Sourcehost(H1), V Destinationhost(H2), Short Bw) {
+        DijkstraShortestPath<V, E> spt = this.sptBWAware.get(Bw);
+        if (spt == null)
+            return null;
+        List<E> path;
+        try {
+            path = spt.getPath(Sourcehost(H1), Destinationhost(H2));
+        } catch (IllegalArgumentException ie) {
+            log.debug("A vertex is yet not known between {} {}", Sourcehost(H1), Destinationhost(H2));
+            return null;
+        }
+        Path res;
+        try {
+            res = new Path(path);
+        } catch (ConstructionException e) {
+            log.debug("A vertex is yet not known between {} {}", Sourcehost(H1), Destinationhost(H2));
+            return null;
+        }
+        return res;
+    }
+
+    @Override
+    public synchronized void clear() {
+        DijkstraShortestPath<V, E> spt;
+        for (Short bw : this.sptBWAware.keySet()) {
+            spt = this.sptBWAware.get(bw);
+            if (spt != null) {
+                spt.reset();
+            }
+        }
+        clearMaxThroughput();
+    }
+
+    @Override
+    public synchronized void clearMaxThroughput() {
+        if (mtp != null) {
+            mtp.reset(); 
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private synchronized boolean updateTopo(E E, Short bw, boolean added) {
+        Graph<V, E> topo = this.topologyBWAware.get(bw);
+        DijkstraShortestPath<V, E> spt = this.sptBWAware.get(bw);
+        boolean EPresentInGraph = false;
+        Short baseBW = Short.valueOf((short) 0);
+
+        if (topo == null) {
+            // Create topology for this BW
+            Graph<V, E> g = new SparseMultigraph();
+            this.topologyBWAware.put(bw, g);
+            topo = this.topologyBWAware.get(bw);
+            this.sptBWAware.put(bw, new DijkstraShortestPath(g));
+            spt = this.sptBWAware.get(bw);
+        }
+
+        if (topo != null) {
+            VConnector Sourcehost(H1) = E.getTailVConnector();
+            VConnector Destinationhost(H2) = E.getHeadVConnector();
+            if (spt == null) {
+                spt = new DijkstraShortestPath(topo);
+                this.sptBWAware.put(bw, spt);
+            }
+
+            if (added) {
+                // Make sure the vertex are there before adding the E
+                topo.addVertex(Sourcehost(H1).getV());
+                topo.addVertex(Destinationhost(H2).getV());
+                // Add the link between
+                EPresentInGraph = topo.containsE(E);
+                if (EPresentInGraph == false) {
+                    try {
+                        topo.addE(new E(Sourcehost(H1), Destinationhost(H2)), Sourcehost(H1).getV(),
+                                Destinationhost(H2).getV(), EType.DIRECTED);
+                    } catch (ConstructionException e) {
+                        log.error("", e);
+                        return EPresentInGraph;
+                    }
+                }
+            } else {
+                // Remove the E
+                try {
+                    topo.removeE(new E(Sourcehost(H1), Destinationhost(H2)));
+                } catch (ConstructionException e) {
+                    log.error("", e);
+                    return EPresentInGraph;
+                }
+                if (topo.containsVertex(Sourcehost(H1).getV())
+                        && topo.inDegree(Sourcehost(H1).getV()) == 0
+                        && topo.outDegree(Sourcehost(H1).getV()) == 0) {
+                    log.debug("Removing vertex {}", Sourcehost(H1));
+                    topo.removeVertex(Sourcehost(H1).getV());
+                }
+
+                if (topo.containsVertex(Destinationhost(H2).getV())
+                        && topo.inDegree(Destinationhost(H2).getV()) == 0
+                        && topo.outDegree(Destinationhost(H2).getV()) == 0) {
+                    log.debug("Removing vertex {}", Destinationhost(H2));
+                    topo.removeVertex(Destinationhost(H2).getV());
+                }
+            }
+            spt.reset();
+            if (bw.equals(baseBW)) {
+                clearMaxThroughput();
+            }
+        } else {
+            log.error("Cannot find topology for BW {} this is unexpected!", bw);
+        }
+        return EPresentInGraph;
+    }
+
+    private boolean EUpdate(E e, UpdateType type, Set<Property> props) {
+        String Sourcehost(H1)Type = null;
+        String Destinationhost(H2)Type = null;
+
+        if (e == null || type == null) {
+            log.error("E or Update type are null!");
+            return false;
+        } else {
+            Sourcehost(H1)Type = e.getTailVConnector().getType();
+            Destinationhost(H2)Type = e.getHeadVConnector().getType();
+
+            if (Sourcehost(H1)Type.equals(VConnector.VConnectorIDType.PRODUCTION)) {
+                log.debug("Skip updates for {}", e);
+                return false;
+            }
+
+            if (Destinationhost(H2)Type.equals(VConnector.VConnectorIDType.PRODUCTION)) {
+                log.debug("Skip updates for {}", e);
+                return false;
+            }
+        }
+
+        Bandwidth bw = new Bandwidth(0);
+        boolean newE = false;
+        if (props != null)
+            props.remove(bw);
+
+        if (log.isDebugEnabled()) {
+          log.debug("EUpdate: {} bw: {}", e, bw.getValue());
+        }
+
+        Short baseBW = Short.valueOf((short) 0);
+        boolean add = (type == UpdateType.ADDED) ? true : false;
+        // Update base topo
+        newE = !updateTopo(e, baseBW, add);
+        if (newE == true) {
+            if (bw.getValue() != baseBW) {
+                // Update BW topo
+                updateTopo(e, (short) bw.getValue(), add);
+            }
+        }
+        return newE;
+    }
+
+    @Override
+    public void EUpdate(List<TopoEUpdate> topoEupdateList) {
+        boolean callListeners = false;
+        for (int i = 0; i < topoEupdateList.size(); i++) {
+            E e = topoEupdateList.get(i).getE();
+            Set<Property> p = topoEupdateList.get(i).getProperty();
+            UpdateType type = topoEupdateList.get(i).getUpdateType();
+            if ((EUpdate(e, type, p)) && (!callListeners)) {
+                callListeners = true;
+            }
+        }
+        if ((callListeners) && (this.routingAware != null)) {
+            for (IListenRoutingUpdates ra : this.routingAware) {
+                try {
+                    ra.recalculateDone();
+                } catch (Exception ex) {
+                    log.error("Exception on routingAware listener call", ex);
+                }
+            }
+        }
+    }
+
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void init() {
+        log.debug("Routing init() is called");
+        this.topologyBWAware = (ConcurrentMap<Short, Graph<V, E>>) new ConcurrentHashMap();
+        this.sptBWAware = (ConcurrentMap<Short, DijkstraShortestPath<V, E>>) new ConcurrentHashMap();
+        Graph<V, E> g = new SparseMultigraph();
+        Short sZero = Short.valueOf((short) 0);
+        this.topologyBWAware.put(sZero, g);
+        this.sptBWAware.put(sZero, new DijkstraShortestPath(g));
+       
+    }
+
+    void destroy() {
+        log.debug("Routing destroy() is called");
+    }
+
+    void start() {
+        log.debug("Routing start() is called");
+        // build the routing database from the topology if it exists.
+        Map<E, Set<Property>> Es = topologyManager.getEs();
+        if (Es.isEmpty()) {
+            return;
+        }
+        List<TopoEUpdate> topoEupdateList = new ArrayList<TopoEUpdate>();
+        log.debug("Creating routing database from the topology");
+        for (Iterator<Map.Entry<E, Set<Property>>> i = Es.entrySet()
+                .iterator(); i.hasNext();) {
+            Map.Entry<E, Set<Property>> entry = i.next();
+            E e = entry.getKey();
+            Set<Property> props = entry.getValue();
+            TopoEUpdate topoEupdate = new TopoEUpdate(e, props,
+                    UpdateType.ADDED);
+            topoEupdateList.add(topoEupdate);
+        }
+        EUpdate(topoEupdateList);
+    }
+
+    public void stop() {
+        log.debug("Routing stop() is called");
+    }
+
+    @Override
+    public void EOverUtilized(E E) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void EUtilBackToNormal(E E) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void setSwitchManager(ISwitchManager switchManager) {
+        this.switchManager = switchManager;
+    }
+
+    public void unsetSwitchManager(ISwitchManager switchManager) {
+        if (this.switchManager == switchManager) {
+            this.switchManager = null;
+        }
+    }
+
+    public void setReadService(IReadService readService) {
+        this.readService = readService;
+    }
+
+    public void unsetReadService(IReadService readService) {
+        if (this.readService == readService) {
+            this.readService = null;
+        }
+    }
+
+    public void setTopologyManager(ITopologyManager tm) {
+        this.topologyManager = tm;
+    }
+
+    public void unsetTopologyManager(ITopologyManager tm) {
+        if (this.topologyManager == tm) {
+            this.topologyManager = null;
+        }
+    }
+}
