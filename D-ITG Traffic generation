@@ -6,4 +6,16 @@ xterm h1 h2
 
 # then navigate to D-ITG>BIN directory on source and destinatin hosts
 
-# 
+# On the Destination host type the following traffic generation script
+
+./ITGRecv
+
+# on the Source host navigate to D-ITG/bin and enter the following script
+
+./ITGSend -T TCP -a 10.0.0.2 -c 10000 -C 100000 -t 100000 -l sender.log -x receiver.log
+
+# For Traffic log analysis enter the follwoing script
+
+./ITGDec sender.log
+
+./ITGDec receiver.log
