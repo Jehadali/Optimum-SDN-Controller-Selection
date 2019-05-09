@@ -1,0 +1,41 @@
+#First of all login as a root and set the root password for ubuntu 16.04 LTS
+
+1. sudo apt-get install mininet
+
+#Clear the previous topolgies logs in the execution
+
+2. sudo mn -c
+
+#Install git
+
+3. sudo apt-get install git
+
+#get mininet clone
+
+4. git clone git://github.com/mininet/mininet
+
+#Mininet will be installed in the current working directory
+
+5. PWD
+
+# Change directory to Mininet
+
+6. cd mininet
+
+#To see the list of available version
+
+7. git tag # list available versions
+
+# To check a particular version
+
+8. git checkout -b [version]
+
+cd ..
+
+mininet/util/install.sh -a
+
+#To run a simple topolgoy , it will check whether mininet has been correctly configured
+
+sudo mn
+
+#The hosts and switches will be emulated in Mininet
