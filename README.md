@@ -3,7 +3,7 @@
 The optimal SDN controller selection methodology is explained here.
 
 
-The experiments are performed for checking the QoS Improvement.
+The experiments can be performed for checking the QoS Improvement.
 
 
 The delay calculation module finds the delay between the source and destination hosts using tcpdumps
