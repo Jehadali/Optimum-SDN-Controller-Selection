@@ -1,53 +1,104 @@
 #brite gnerated topology conversion to Mininet
+
 from mininet.topo import Topo
+
 from mininet.net import Mininet
+
 from mininet.link import Link, TCLink
+
 from mininet.node import RemoteController
+
 from mininet.log import setLogLevel
+
 from mininet.node import Controller, RemoteController, OVSKernelSwitch, UserSwitch
+
 from mininet.log import setLogLevel
+
 from mininet.cli import CLI
+
 from mininet.util import dumpNodeConnections
+
 import networkx as nx
+
 import pylab as plt
+
 from datetime import datetime
+
 import fnss
+
 #The labelling of the brite topologies in the Mininet i.e. 0 will be converted to 1, 1 to 2 and so on
+
 def reshappingtoMininet(x):
+
 return x+1
+
 def mytopology():
+
 #to deal with Brite topology (200 nodes, 400 Edges)
+
 #Topology generated via Brite
+
 brite_file = ('File.brite') # importing the topology file generated in brite  
+
 #parse brite file via fnss
+
 #Adding fnss adapter to parse the brite generated topology to Mininet
+
 mytopology = fnss.parse_brite(brite_file)
+
 mytopology= topology.to_undirected()
+
 #Labelling of the Brite generated topology 
+
 ConvertedTopo=nx.relabel_nodes(mytopology,reshappingtoMininet)
+
 fnss.clear_capacities(ConvertedTopo)
+
 #print(ConvertedTopo.nodes())
+
 Nodes_list= ConvertedTopo.nodes(data=False)
+
 mn_topo = fnss.to_mininet(ConvertedTopo, switches= Nodes_list, hosts=None, relabel_nodes=True)
+
 net = Mininet(topo=mn_topo, link=TCLink, controller=RemoteController)
+
 #Adding a controller to the topology for experiments
+
 c1 = net.addController('c1',controller=RemoteController,ip='127.0.0.1',port = 6633)
+
 #Added The source and destination Hosts to Brite Topology B_1 and B_2 
+
 h1= net.addHost( 'h1', mac="00:00:00:00:00:10" ) #
+
 h2 = net.addHost('h2', mac="00:00:00:00:00:100" ) #
+
 net.addLink(h1, 's10') # A example of source host at OpenFlow switch S10
+
 net.addLink(h2, 's100') # A example of source host at OpenFlow switch S100
+
 h1.cmd("arp -s 10.0.0.10 00:00:00:00:00:10") #
+
 h2.cmd("arp -s 10.0.0.100 00:00:00:00:00:100") #
+
 #Recording files for send and receive packets at source and destination hosts
+
 h1.cmd("tcpdump -i h1-eth0 -nn -X 'icmp' -w send &") #
+
 h2.cmd("tcpdump -i h2-eth0 -nn -X 'icmp' -w receive &") #
+
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 net.start()
+
 print "Dumping host connections"
+
 dumpNodeConnections(net.hosts)
+
 CLI( net )
+
 net.stop()
+
 if __name__ == '__main__':
+
 setLogLevel( 'info' )
+
 mytopology()
