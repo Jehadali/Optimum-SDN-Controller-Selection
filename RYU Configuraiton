@@ -1,0 +1,22 @@
+% pip install ryu
+
+#or follow the following commands
+
+git clone git://github.com/osrg/ryu.git
+
+cd ryu 
+
+python ./setup.py install
+
+cd ryu
+
+then
+
+cd /usr/local/lib/python2.7/dist-packages/ryu/app
+
+
+#for starting gui: run the following on the server
+
+root@ubuntu:/usr/local/lib/python2.7/dist-packages/ryu/app# sudo ryu run gui_topology/gui_topology.py simple_switch_13.py --observe-links
+
+
