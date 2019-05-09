@@ -1,0 +1,40 @@
+# The installation of ODL is described Here.
+
+sudo apt-get install default-jre-headless
+
+sudo apt-get install openjdk-8-jdk
+
+sudo apt-get install openjdk-8-jre
+
+sudo apt-get install maven
+
+#Setting java home
+
+export Java_Home=/usr/lib/jvm/java-1.8.0-openjdk-i386 (for 32 bit)
+
+export Java_Home=/usr/lib/jvm/java-1.8.0-openjdk-amd64 (for 32 bit)
+
+sudo nano .profile 
+
+#Now add the above path i.e. to the .profile file
+
+Java_Home=:/usr/lib/jvm/java-1.8.0-openjdk-amd64 (for 32 bit)
+#Useful commands for starting gui:
+
+http://docs.opendaylight.org/en/stable-nitrogen/getting-started-guide/common-features/dlux.html
+
+feature:install odl-restconf
+
+feature:install odl-l2switch-switch
+
+feature:install odl-mdsal-apidocs
+
+feature:install odl-dlux-core
+#run another command i.e.
+
+feature:install odl-dlux-all
+feature:install odl-vtn-manager-rest
+
+# For starting Web based GUI. 
+
+192.168.112.128:8181/index.html # The IP address must be changed according to your PC IP Address
