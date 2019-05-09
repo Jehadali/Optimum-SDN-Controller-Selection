@@ -16,3 +16,16 @@ The topolgoy conversion module converts the topolgies generated via Brite i.e. B
 
 
 The D-ITG calculates the delay between the source and destination during the high traffic load scenario.
+
+
+Pre-requisities
+
+Installation of Distributed Internet Traffic generator
+
+Installation of FNSS
+
+Installation of Mininet
+
+Installation of ODL and RYU Controllers
+
+Installation of Networkx 
