@@ -28,6 +28,8 @@ Installation of Fast Network Simulation Setup (FNSS)
 
 Installation of Mininet
 
-Installation of ODL and RYU Controllers
+Configuration of ODL Controller
+
+Configuraiton of RYU Controller
 
 Installation of Networkx 
