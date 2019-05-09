@@ -22,11 +22,11 @@ Pre-requisities
 
 Installation of Ubuntu 16.04 LTS
 
-Installation of Distributed Internet Traffic generator
+Installation and configuraiton of Distributed Internet Traffic generator
 
 Installation of Fast Network Simulation Setup (FNSS)
 
-Installation of Mininet
+Configuration of Mininet
 
 Configuration of ODL Controller
 
