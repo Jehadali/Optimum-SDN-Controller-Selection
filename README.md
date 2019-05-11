@@ -24,12 +24,10 @@ Installation of Ubuntu 16.04 LTS
 
 Installation and configuraiton of Distributed Internet Traffic generator
 
-Installation of Fast Network Simulation Setup (FNSS)
-
 Configuration of Mininet
 
 Configuration of ODL Controller
 
 Configuraiton of RYU Controller
 
-Installation of Networkx 
+
