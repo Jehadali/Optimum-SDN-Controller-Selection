@@ -18,16 +18,4 @@ The topolgoy conversion module converts the topolgies generated via Brite i.e. B
 The D-ITG calculates the delay between the source and destination during the high traffic load scenario.
 
 
-Pre-requisities
-
-Installation of Ubuntu 16.04 LTS
-
-Installation and configuraiton of Distributed Internet Traffic generator
-
-Configuration of Mininet
-
-Configuration of ODL Controller
-
-Configuraiton of RYU Controller
-
 
