@@ -64,17 +64,7 @@ net = Mininet(topo=mn_topo, link=TCLink, controller=RemoteController)
 
 #Adding a controller to the topology for experiments
 
-c1 = net.addController('c1',controller=RemoteController,ip='127.0.0.1',port = 6633)
-
-#Added The source and destination Hosts to Brite Topology B_1 and B_2 
-
-h1= net.addHost( 'h1', mac="00:00:00:00:00:10" ) #
-
-h2 = net.addHost('h2', mac="00:00:00:00:00:100" ) #
-
-net.addLink(h1, 's10') # A example of source host at OpenFlow switch S10
-
-net.addLink(h2, 's100') # A example of source host at OpenFlow switch S100
+c1 = net.addController('c1',controller=RemoteController,ip='127.0.0.1',port = 6653)
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 net.start()
