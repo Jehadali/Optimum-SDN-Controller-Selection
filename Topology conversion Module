@@ -1,4 +1,4 @@
-#brite gnerated topology conversion to Mininet
+#brite gnerated topology conversion to Mininet uses FNSS adapter
 
 from mininet.topo import Topo
 
@@ -75,16 +75,6 @@ h2 = net.addHost('h2', mac="00:00:00:00:00:100" ) #
 net.addLink(h1, 's10') # A example of source host at OpenFlow switch S10
 
 net.addLink(h2, 's100') # A example of source host at OpenFlow switch S100
-
-h1.cmd("arp -s 10.0.0.10 00:00:00:00:00:10") #
-
-h2.cmd("arp -s 10.0.0.100 00:00:00:00:00:100") #
-
-#Recording files for send and receive packets at source and destination hosts
-
-h1.cmd("tcpdump -i h1-eth0 -nn -X 'icmp' -w send &") #
-
-h2.cmd("tcpdump -i h2-eth0 -nn -X 'icmp' -w receive &") #
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 net.start()
