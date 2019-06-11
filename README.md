@@ -26,3 +26,7 @@ http://www.grid.unina.it/software/ITG/
 The link to video i have made for mininet installation 
 
 https://www.youtube.com/watch?v=nXzyFWYE5Sw&t=86s
+
+How to create any topology and save it as a python code. Please follow this link i have created a video for it.
+
+https://www.youtube.com/watch?v=tzRG-0eQHA0&feature=youtu.be
