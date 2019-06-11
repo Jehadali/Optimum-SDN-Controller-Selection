@@ -1,5 +1,9 @@
 #First of all login as a root and set the root password for ubuntu 16.04 LTS
 
+the link to the video i made for mininet installation.
+
+https://www.youtube.com/watch?v=nXzyFWYE5Sw&t=86s
+
 1. sudo apt-get install mininet
 
 #Clear the previous topolgies logs in the execution
