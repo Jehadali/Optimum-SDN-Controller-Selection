@@ -3,6 +3,9 @@
 The optimal SDN controller selection methodology is explained here.
 
 
+Feature based analysis were performed uisng ANP and AHP. Problem formulation and Modeling was done through ANP as explained in the paper.
+
+
 The experiments can be performed for checking the QoS Improvement.
 
 
