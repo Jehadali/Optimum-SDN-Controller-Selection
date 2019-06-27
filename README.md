@@ -14,6 +14,8 @@ The delay calculation module finds the delay between the source and destination 
 
 B_1 and B_2 are the topologies generated via Brite. Link for topologies generation via brite is given below; The topology generation model we have used is waxman.
 
+The pdf file in the files section named "Topology generation via brite.pdf" explains step by step process how we have generated these topologies.
+
 https://www.cs.bu.edu/brite/user_manual/node30.html
 
 
