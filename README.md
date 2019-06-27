@@ -25,6 +25,10 @@ Topology parsing from FNSS
 
 https://fnss.readthedocs.io/en/latest/_modules/fnss/topologies/parsers.html#parse_brite
 
+Installing and downloading BRITE 
+
+https://www.cs.bu.edu/brite/user_manual/node46.html
+
 The D-ITG calculates the delay between the source and destination during the high traffic load scenario.
 
 http://www.grid.unina.it/software/ITG/
