@@ -21,6 +21,9 @@ The topology conversion module converts the topolgies generated via Brite i.e. B
 
 https://fnss.github.io/
 
+Topology parsing from FNSS 
+
+https://fnss.readthedocs.io/en/latest/_modules/fnss/topologies/parsers.html#parse_brite
 
 The D-ITG calculates the delay between the source and destination during the high traffic load scenario.
 
